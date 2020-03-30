@@ -296,3 +296,10 @@ bash 'wait_for_core_dns' do
     kubectl wait --for=condition=available --timeout=600s deployment/coredns -n kube-system
   EOH
 end
+
+# Register API serverwith Consul
+consul_service "Registering API server with Consul" do
+  service_definition "consul/api-consul.hcl.erb"
+  reload_consul false
+  action :register
+end
