@@ -88,5 +88,5 @@ default['kube-hops']['istio_url']                          = node['download_url'
 
 # Model serving admission controller
 
-default['kube-hops']['model_serving_webhook_image'] = "javierdlrm/model-serving-admission-controller:latest"
-default['kube-hops']['model_storage_initializer_image'] = "javierdlrm/model-storage-initializer:latest"
+default['kube-hops']['model_serving_webhook_image'] = default['kube-hops']['docker_img_reg_url'] + "/model-serving-admission-controller:latest"
+default['kube-hops']['model_storage_initializer_image'] = default['kube-hops']['docker_img_reg_url'] + "/model-storage-initializer:latest"
