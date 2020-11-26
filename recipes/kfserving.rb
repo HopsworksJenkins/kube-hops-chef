@@ -206,3 +206,25 @@ kube_hops_kubectl 'apply-model-serving-webhook' do
   group node['kube-hops']['group']
   url "/home/#{node['kube-hops']['user']}/model-serving-webhook"
 end
+
+# Filebeat
+
+logstash_fqdn = consul_helper.get_service_fqdn("logstash")
+logstash_serving_endpoint = logstash_fqdn + ":#{node['logstash']['beats']['serving_tf_port']}"
+serving_log_name = "serving"
+
+template "/home/#{node['kube-hops']['user']}/filebeat.yaml" do
+  source "filebeat-serving.yml.erb"
+  owner node['kube-hops']['user']
+  group node['kube-hops']['group']
+  variables({ 
+    :logstash_endpoint => logstash_serving_endpoint,
+    :log_name => serving_log_name
+  })
+end
+
+kube_hops_kubectl 'apply-filebeat' do
+  user node['kube-hops']['user']
+  group node['kube-hops']['group']
+  url "/home/#{node['kube-hops']['user']}/filebeat.yaml"
+end
