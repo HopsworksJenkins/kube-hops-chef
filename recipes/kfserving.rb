@@ -210,7 +210,7 @@ end
 # Filebeat
 
 logstash_fqdn = consul_helper.get_service_fqdn("logstash")
-logstash_serving_endpoint = logstash_fqdn + ":#{node['logstash']['beats']['serving_tf_port']}"
+logstash_serving_endpoint = logstash_fqdn + ":#{node['logstash']['beats']['serving_port']}"
 serving_log_name = "serving"
 
 template "/home/#{node['kube-hops']['user']}/filebeat.yaml" do
