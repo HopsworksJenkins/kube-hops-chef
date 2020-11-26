@@ -28,6 +28,13 @@ dependencies:
       - kube-hops::addons      
       - hops::docker_registry
 
+  - recipe: kube-hops::filebeat
+    global:
+      - kube-hops::node
+      - kube-hops::master
+      - kube-hops::addons      
+      - hops::docker_registry
+
 # Wait to run the hopsworks recipe after install
   - recipe: kube-hops::hopsworks
     global:

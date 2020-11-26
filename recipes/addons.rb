@@ -66,3 +66,7 @@ end
 if node['kube-hops']['kfserving']['enabled'].casecmp?("true")
   include_recipe "kube-hops::kfserving"
 end
+
+if node['kube-hops']['filebeat']['enabled'].casecmp?("true")
+  include_recipe "kube-hops::filebeat"
+end
