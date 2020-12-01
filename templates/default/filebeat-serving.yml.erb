@@ -11,24 +11,23 @@ data:
     filebeat.autodiscover:
       providers:
         - type: kubernetes
-          scope: cluster
           node: ${NODE_NAME}
           templates:
-          - condition:
-            equals:
-              kubernetes.labels.component: predictor
-    logging.files:
-      path: var/log
-      name: <%= @log_name %>
-      keepfiles: 7
-      permissions: 0644
+            - condition.has_fields: ['kubernetes.labels.serving_hops_works/serving-id']
+              config:
+                - type: container
+                  fields:
+                    source: "kube"  
+                  paths:
+                    - '/var/lib/docker/containers/${data.kubernetes.container.id}/*.log'
+                  exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
     output:
       logstash:
-      hosts: ["<%= @logstash_endpoint %>"]
+        hosts: ["<%= @logstash_endpoint %>"]
 ---
 apiVersion: apps/v1
 kind: DaemonSet
-metadata:
+metadata: 
   name: filebeat
   namespace: hops-system
   labels:
@@ -48,7 +47,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: filebeat
-          image: docker.elastic.co/beats/filebeat:8.0.0
+          image: docker.elastic.co/beats/filebeat:7.9.3
           args: ["-c", "/etc/filebeat.yml", "-e"]
           env:
             - name: NODE_NAME
@@ -68,14 +67,11 @@ spec:
               mountPath: /etc/filebeat.yml
               readOnly: true
               subPath: filebeat.yml
-            - name: data
-              mountPath: /usr/share/filebeat/data
             - name: varlibdockercontainers
               mountPath: /var/lib/docker/containers
               readOnly: true
-            - name: filebeatlog
-              mountPath: /var/log
-              readOnly: true
+            - name: filebeatdata
+              mountPath: /usr/share/filebeat/data
       volumes:
         - name: config
           configMap:
@@ -83,15 +79,9 @@ spec:
             name: filebeat-config
         - name: varlibdockercontainers
           hostPath:
-            path: /var/lib/docker/containers
-        - name: filebeatlog
-          hostPath:
-            path: <%= node['filebeat']['base_dir'] %>/log/
-        - name: data
-          hostPath:
-            # When filebeat runs as non-root user, this directory needs to be writable by group (g+w).
-            path: <%= node['filebeat']['base_dir'] %>/data/<%= @log_name %>
-            type: DirectoryOrCreate
+            path: /srv/hops/docker/containers
+        - name: filebeatdata
+          emptyDir: {}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -113,7 +103,7 @@ metadata:
   labels:
     app: filebeat
 rules:
-  - apiGroups: [""] # "" indicates the core API group
+  - apiGroups: [""]
     resources:
       - namespaces
       - pods
