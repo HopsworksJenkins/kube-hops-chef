@@ -3,10 +3,10 @@ source 'https://supermarket.chef.io'
 metadata
 
 # Hops cookbooks
-cookbook 'kagent', github: "logicalclocks/kagent-chef", branch: "master"
-cookbook 'ndb', github: "logicalclocks/ndb-chef", branch: "master"
-cookbook 'consul', github: "logicalclocks/consul-chef", branch: "master"
-cookbook 'hops', github: "logicalclocks/hops-hadoop-chef", branch: "master"
+cookbook 'kagent', github: "hopsworksjenkins/kagent-chef", branch: "1411-ee"
+cookbook 'ndb', github: "hopsworksjenkins/ndb-chef", branch: "1411-ee"
+cookbook 'consul', github: "hopsworksjenkins/consul-chef", branch: "1411-ee"
+cookbook 'hops', github: "hopsworksjenkins/hops-hadoop-chef", branch: "1411-ee"
 
 cookbook 'sysctl', '~> 1.0.3'
 cookbook 'kernel_module', '~> 1.1.1'
