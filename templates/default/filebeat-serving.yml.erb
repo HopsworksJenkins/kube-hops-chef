@@ -13,7 +13,7 @@ data:
         - type: kubernetes
           node: ${NODE_NAME}
           templates:
-            - condition.has_fields: ['kubernetes.labels.serving_hops_works/serving-id']
+            - condition.has_fields: ['kubernetes.labels.serving_hops_works/id']
               config:
                 - type: container
                   fields:
