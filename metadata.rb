@@ -13,6 +13,7 @@ depends 'consul'
 depends 'hops'
 depends 'magic_shell', '~> 1.0.0'
 depends 'hopslog'
+depends 'kkafka'
 
 recipe 'kube-hops::ca', 'Create and configure Kubernetes\'s CA'
 recipe 'kube-hops::master', 'Configure a node as Kubernetes master'
@@ -21,6 +22,7 @@ recipe 'kube-hops::addons', 'Deploy addons on the cluster'
 recipe 'kube-hops::hopsworks', 'Configure Hopsworks to use Kubernetes'
 recipe 'kube-hops::kfserving', 'Configure and install KFServing (istio, knative, ...) on Kubernetes'
 recipe 'kube-hops::filebeat', 'Configure and install Filebeat for model server logging on Kubernetes'
+recipe 'kube-hops::hops-system', 'Create and configure Hops-system namespace in Kubernetes for configuration and core components'
 
 
 attribute "kube-hops/hopsworks_user",

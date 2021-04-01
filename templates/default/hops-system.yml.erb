@@ -13,6 +13,20 @@ rules:
     resources: ["configmaps"]
     verbs: ["get"]
 ---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: configmaps-reader-binding
+  namespace: hops-system
+subjects:
+- kind: ServiceAccount
+  name: default
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: configmaps-reader
+  apiGroup: ""
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -33,16 +47,23 @@ data:
         "memoryLimit": "1Gi"
     }
 ---
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: configmaps-reader-binding
+  name: hops-system--logging
   namespace: hops-system
-subjects:
-- kind: ServiceAccount
-  name: default
-  apiGroup: ""
-roleRef:
-  kind: Role
-  name: configmaps-reader
-  apiGroup: ""
+data:
+  kafka: |-
+    {
+        "brokers": "<%= @kafka_brokers %>",
+        "schema": "{ \"type\": \"record\", \"name\": \"inferencelog\", \"fields\": [ { \"name\": \"servingId\", \"type\": \"int\" }, { \"name\": \"modelName\", \"type\": \"string\" }, { \"name\": \"modelVersion\", \"type\": \"int\" }, { \"name\": \"requestTimestamp\", \"type\": \"long\" }, { \"name\": \"responseHttpCode\", \"type\": \"int\" }, { \"name\": \"inferenceId\", \"type\": \"string\" }, { \"name\": \"messageType\", \"type\": \"string\" }, { \"name\": \"payload\", \"type\": \"string\" } ] } ",
+        "schemaVersion": 3
+    }
+  inferenceLogger: |-
+    {
+        "image": "<%= node['kube-hops']['docker_img_reg_url'] %>/<%= node['kube-hops']['inference-logger']['image'] %>",
+        "cpuRequest": "0.1",
+        "cpuLimit": "1",
+        "memoryRequest": "128Mi",
+        "memoryLimit": "1Gi"
+    }

@@ -67,6 +67,10 @@ if node['kube-hops']['docker_img_reg_url'].eql?("")
   node.override['kube-hops']['docker_img_reg_url'] = registry_host + ":#{node['hops']['docker']['registry']['port']}"
 end
 
+if node['kube-hops']['kfserving']['enabled'].casecmp?("true") || node['kube-hops']['filebeat']['enabled'].casecmp?("true")
+  include_recipe "kube-hops::hops-system"
+end
+
 if node['kube-hops']['kfserving']['enabled'].casecmp?("true")
   include_recipe "kube-hops::kfserving"
 end
